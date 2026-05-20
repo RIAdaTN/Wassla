@@ -1,29 +1,46 @@
-# ProjectName
+# IOReviewCode
 
-Short description: what this project does and why.
+AI-powered enterprise code review platform designed to automate pull request analysis, improve code quality, and enforce engineering best practices across multiple repositories and organizations.
+
+The platform provides:
+- Automated PR reviews
+- Stack-aware analysis (Frontend & Backend)
+- Security and maintainability checks
+- Enterprise-level review reports
+- Multi-organization repository management
+
+---
+
+## Features
+
+- AI-generated pull request reviews
+- Support for multiple technology stacks:
+  - Angular
+  - React / Vite
+  - FastAPI
+  - Java Spring Boot
+- Security-focused code analysis
+- Maintainability and architecture recommendations
+- CI/CD integration support
+- Multi-organization repository configuration
+
+---
 
 ## Quickstart
 
-Prerequisites:
-- Node.js >= 14 (or relevant runtime)
-- Docker (optional)
+### Prerequisites
 
-Run locally:
-1. git clone ...
-2. cd repo
-3. ./scripts/setup.sh
-4. npm install && npm start
+Before running the project locally, make sure you have:
 
-## Development
+- Node.js >= 18
+- Python >= 3.11
+- Git
+- Docker (optional but recommended)
 
-- Tests: npm test
-- Linting: npm run lint
-- Formatting: npm run format
+---
 
-## License
+### Clone the Repository
 
-This project is licensed under the MIT License — see LICENSE.md for details.
-
-## Contributing
-
-See CONTRIBUTING.md
+```bash
+git clone https://github.com/iovision-io/ioreviewcode.git
+cd ioreviewcode
