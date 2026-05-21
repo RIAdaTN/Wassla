@@ -1,0 +1,363 @@
+@use '../../../../../libs/shared/styles/lib/variables' as *;
+
+.hub-section {
+  height: calc(100vh - $header-height);
+    width: 100%;
+  background: $bg-secondary;
+    display: flex;
+    flex-direction: column;
+  font-family: $font-family-base;
+    overflow: hidden;
+  }
+
+.app-header {
+    background: $white;
+    border-bottom: 1px solid $border-color;
+    padding: 8px 0;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 100;
+  }
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: 0 $spacing-lg;
+  }
+  
+  .header-title {
+    flex-shrink: 0;
+    
+    h1 {
+      margin: 0;
+    font-size: $font-size-lg;
+    line-height: $line-height-tight;
+      color: $text-primary;
+      font-weight: $font-weight-semibold;
+    }
+  }
+  
+  .header-subtitle {
+    margin: 2px 0 0 0;
+  font-size: $font-size-xs;
+  line-height: $line-height-tight;
+    color: $text-secondary;
+  }
+  
+  .hub-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-xl $spacing-md;
+    min-height: 0;
+    overflow: hidden;
+    min-width: 1200px;
+  }
+  
+  /* Messages Area */
+  .hub-messages {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  padding: $spacing-lg;
+  background: $white;
+  border-radius: $border-radius-xl;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-sm;
+    scroll-behavior: smooth;
+  }
+  
+  .message {
+  margin-bottom: $spacing-md;
+  }
+  
+  .message-user {
+    display: flex;
+    justify-content: flex-end;
+  margin-bottom: $spacing-md;
+  }
+  
+  .message-bot {
+    display: flex;
+    justify-content: flex-start;
+  gap: $spacing-md-sm;
+    max-width: 95%;
+  margin-bottom: $spacing-md;
+  }
+  
+  .bot-avatar {
+  width: $size-md;
+  height: $size-md;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-color 100%);
+  border-radius: $border-radius-full;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  margin-top: $spacing-xs;
+  box-shadow: $shadow-header;
+  
+  svg {
+    width: $spacing-md;
+    height: $spacing-md;
+    stroke: $white;
+    stroke-width: 2;
+  }
+}
+
+.welcome-message-wrapper {
+  margin-bottom: $spacing-lg;
+  }
+    
+  /* Message Bubbles */
+  .message-bubble {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .user-bubble {
+  background: linear-gradient(135deg, $primary-color 0%, $primary-color 100%);
+  color: $white;
+  padding: $spacing-md-sm $spacing-md;
+  border-radius: 18px 18px $border-radius-sm 18px;
+  box-shadow: $shadow-md;
+    max-width: 90%;
+    margin-left: auto;
+  }
+  
+  .bot-bubble {
+  background: $white;
+  padding: $spacing-md $spacing-xl;
+  border-radius: $border-radius-sm 18px 18px 18px;
+  box-shadow: $shadow-md;
+  border: 1px solid $border-color-light;
+  min-width: 600px;
+  
+  &.bot-bubble-loading {
+    min-width: auto;
+    width: fit-content;
+    padding: $spacing-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  }
+  
+  .message-time {
+  font-size: $font-size-xs;
+  margin-top: $spacing-xs;
+  color: $text-tertiary;
+  }
+  
+  .user-bubble .message-time {
+    text-align: right;
+    color: $white;
+    opacity: 0.7;
+  }
+  
+  /* Input Container */
+  .hub-input-container {
+  background: $white;
+  padding: $spacing-md;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-sm;
+  }
+  
+  .input-wrapper {
+    display: flex;
+  gap: $spacing-md-sm;
+    align-items: center;
+  }
+  
+  .hub-chat-input {
+    flex: 1;
+  padding: $spacing-md $spacing-md;
+  border: 2px solid $border-color-light;
+  border-radius: $border-radius-xl;
+  font-size: $font-size-base;
+  line-height: $line-height-tight;
+    resize: none;
+    outline: none;
+  transition: all $transition-slow;
+    font-family: inherit;
+  background: $bg-secondary;
+  min-height: $size-lg;
+    max-height: 120px;
+  color: $text-muted;
+  font-weight: $font-weight-medium;
+  
+  &:focus {
+    border-color: $primary-color;
+    background: $white;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    transform: translateY(-1px);
+  }
+  
+  &::placeholder {
+    color: $text-tertiary;
+    font-weight: $font-weight-normal;
+  }
+  }
+  
+  .hub-send-button {
+  width: 44px;
+  height: 44px;
+  background: $primary-color;
+    border: none;
+  border-radius: $border-radius-xl;
+  color: $white;
+  font-size: $font-size-lg;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  transition: all $transition-base;
+    flex-shrink: 0;
+  
+  &:hover:not(:disabled) {
+    background: $primary-hover;
+    transform: translateY(-2px);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  }
+  
+  .input-hint {
+  margin-top: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+    text-align: center;
+  }
+  
+  /* BPMN Modal Styles */
+  .bpmn-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+  
+  /* Force hide palette in modal */
+  .djs-palette {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+  
+  .djs-palette-entries,
+  .djs-palette-entry * {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  }
+  
+  .bpmn-modal-content {
+  background: $white;
+  border-radius: $border-radius-xl;
+    width: 100%;
+    max-width: 90vw;
+    height: 90vh;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  box-shadow: $shadow-xl;
+  }
+  
+  .bpmn-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  padding: $spacing-md $spacing-md;
+  border-bottom: 1px solid $border-color-light;
+  }
+  
+  .bpmn-modal-title-wrapper {
+    display: flex;
+    align-items: center;
+  gap: $spacing-md-sm;
+  }
+  
+  .bpmn-modal-title-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  color: $text-secondary;
+  width: $size-sm;
+  height: $size-sm;
+  }
+  
+  .bpmn-modal-title {
+    margin: 0;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+  }
+  
+  .bpmn-modal-controls {
+    display: flex;
+    align-items: center;
+  gap: $spacing-md-sm;
+  }
+  
+  .bpmn-modal-body {
+    flex: 1;
+  padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+  }
+  
+  /* Hide BPMN.io watermark */
+  ::ng-deep .bjs-powered-by {
+    display: none !important;
+  }
+
+  /* Diagram editor in preview */
+  .diagram-preview-wrapper {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    background: $diagram-bg;
+    position: relative;
+    overflow: visible !important;
+  }
+  
+  /* Button styles for workflow actions */
+  .hub-demo-soap,
+  .hub-demo-edit {
+  transition: all $transition-base;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative;
+    z-index: 1;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+  
+  * {
+    pointer-events: none;
+  }
+}

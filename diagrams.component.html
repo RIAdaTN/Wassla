@@ -1,0 +1,246 @@
+<div class="workspace-container">
+  <!-- Header -->
+  <div class="app-header">
+    <div class="header-content">
+      <button class="collapse-btn" (click)="toggleChatHistory()" title="Toggle chat history">
+        <lib-icon [name]="chatHistoryVisible ? 'chevron-left' : 'diagrams-history'" [size]="14"
+          [strokeWidth]="2.5"></lib-icon>
+      </button>
+      <div class="header-title">
+        <h1>{{ 'diagrams.title' | translate }}</h1>
+        <p class="header-subtitle">{{ currentWorkflowTitle }}</p>
+      </div>
+      <div class="header-actions">
+        @if (showSaveButton) {
+        <button class="save-btn" (click)="saveWorkflow()">
+          <lib-icon name="save" [size]="14"></lib-icon>
+          {{ 'diagrams.save' | translate }}
+        </button>
+        }
+        @if (currentWorkflowId) {
+        <button class="status-btn" (click)="openStatusModal()" [title]="'Status: ' + currentStatus">
+          <span class="status-badge" [class.status-draft]="currentStatus === 'draft'"
+            [class.status-in-review]="currentStatus === 'in review'"
+            [class.status-approved]="currentStatus === 'approved'">
+            {{ currentStatus }}
+          </span>
+        </button>
+        }
+        <button class="download-btn" (click)="openExportModal()" title="Download diagram">
+          <lib-icon name="download" [size]="16"></lib-icon>
+          <span>{{ 'Download' | translate }}</span>
+        </button>
+        <button class="chat-toggle-btn" (click)="toggleChatSidebar()"
+          [title]="chatSidebarVisible ? 'Close chat' : 'Open chat'">
+          @if (chatSidebarVisible) {
+          <lib-icon name="chevron-right" [size]="14" [strokeWidth]="2.5"></lib-icon>
+          } @else {
+          <lib-icon name="message" [size]="14" [strokeWidth]="2.5"></lib-icon>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Main Content Area -->
+  <div class="content-area">
+    <!-- History Sidebar -->
+    <lib-bpmn-history [currentWorkflowId]="currentWorkflowId" [currentWorkflowTitle]="currentWorkflowTitle"
+      [visible]="chatHistoryVisible" (workflowSelected)="onWorkflowSelected($event)"
+      (newDiagramRequested)="onNewDiagramRequested()">
+    </lib-bpmn-history>
+
+    <!-- BPMN Canvas -->
+    <div class="modeler-container">
+      <lib-diagram-editor #diagramEditor [loading]="false">
+      </lib-diagram-editor>
+    </div>
+
+    <!-- Chat Sidebar -->
+    <div class="chat-sidebar-wrapper" [class.hidden]="!chatSidebarVisible">
+      <lib-chat-interface #chatInterface [messages]="messages" [loading]="isLoading" [enableAudio]="true"
+        [enablePdf]="true" [enableImage]="true" [botIcon]="'assets/minimized_avatar.png'"
+        [welcomeMessage]="'Hello! I\'m your Process Advisor, how can I help you?'"
+        (messageSent)="onMessageSent($event)">
+      </lib-chat-interface>
+    </div>
+  </div>
+
+  <!-- New Diagram Options Modal -->
+  @if (showNewDiagramOptionsModal) {
+  <div class="modal-overlay" (click)="closeNewDiagramOptionsModal()" (keyup.esc)="closeNewDiagramOptionsModal()"
+    tabindex="0">
+    <div class="modal-content" (click)="$event.stopPropagation()" (keyup.enter)="$event.stopPropagation()" tabindex="0">
+      <div class="modal-header">
+        <lib-icon name="plus" [size]="56" [strokeWidth]="3" class="modal-icon"></lib-icon>
+        <div class="modal-title">{{ 'diagrams.createNewDiagram' | translate }}</div>
+        <div class="modal-subtitle">{{ 'diagrams.createNewDiagramSubtitle' | translate }}</div>
+      </div>
+      <div class="modal-options">
+        <button class="option-btn option-btn-primary" (click)="openEmptyDiagramModal()">
+          <lib-icon name="empty-square" [size]="24"></lib-icon>
+          <div class="option-content">
+            <div class="option-title">{{ 'diagrams.createEmptyDiagram' | translate }}</div>
+            <div class="option-description">{{ 'diagrams.createEmptyDiagramDesc' | translate }}</div>
+          </div>
+        </button>
+        <button class="option-btn" (click)="openUploadDiagramModal()">
+          <lib-icon name="upload" [size]="24"></lib-icon>
+          <div class="option-content">
+            <div class="option-title">{{ 'diagrams.uploadFromLocal' | translate }}</div>
+            <div class="option-description">{{ 'diagrams.uploadFromLocalDesc' | translate }}</div>
+          </div>
+        </button>
+      </div>
+      <div class="modal-actions">
+        <lib-button color="outline" (clicked)="closeNewDiagramOptionsModal()">{{ 'common.cancel' | translate
+          }}</lib-button>
+      </div>
+      <button class="modal-close" (click)="closeNewDiagramOptionsModal()">&times;</button>
+    </div>
+  </div>
+  }
+
+  <!-- Empty Diagram Modal -->
+  @if (showEmptyDiagramModal) {
+  <div class="modal-overlay" (click)="closeEmptyDiagramModal()" (keyup.esc)="closeEmptyDiagramModal()" tabindex="0">
+    <div class="modal-content" (click)="$event.stopPropagation()" (keyup.enter)="$event.stopPropagation()" tabindex="0">
+      <div class="modal-header">
+        <lib-icon name="plus" [size]="56" [strokeWidth]="3" class="modal-icon"></lib-icon>
+        <div class="modal-title">{{ 'diagrams.createEmptyDiagram' | translate }}</div>
+      </div>
+      <div class="modal-form">
+        <div class="form-group">
+          <label for="empty-diagram-name" class="form-label">{{ 'diagrams.diagramName' | translate }}</label>
+          <input id="empty-diagram-name" type="text" class="form-input" [(ngModel)]="newDiagramName"
+            [placeholder]="'diagrams.newDiagram' | translate" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <lib-button color="outline" (clicked)="closeEmptyDiagramModal()">{{ 'common.cancel' | translate }}</lib-button>
+        <lib-button color="primary" (clicked)="createEmptyDiagram()">{{ 'common.create' | translate }}</lib-button>
+      </div>
+      <button class="modal-close" (click)="closeEmptyDiagramModal()">&times;</button>
+    </div>
+  </div>
+  }
+
+  <!-- Upload Diagram Modal -->
+  @if (showUploadDiagramModal) {
+  <div class="modal-overlay" (click)="closeUploadDiagramModal()" (keyup.esc)="closeUploadDiagramModal()" tabindex="0">
+    <div class="modal-content" (click)="$event.stopPropagation()" (keyup.enter)="$event.stopPropagation()" tabindex="0">
+      <div class="modal-header">
+        <lib-icon name="upload" [size]="56" [strokeWidth]="3" class="modal-icon"></lib-icon>
+        <div class="modal-title">{{ 'diagrams.uploadFromLocal' | translate }}</div>
+      </div>
+      <div class="modal-form">
+        <div class="form-group">
+          <label for="new-diagram-name" class="form-label">{{ 'diagrams.diagramName' | translate }}</label>
+          <input id="new-diagram-name" type="text" class="form-input" [(ngModel)]="newDiagramName"
+            [placeholder]="'diagrams.newDiagram' | translate" />
+        </div>
+        <div class="form-group">
+          <label for="new-diagram-department" class="form-label">{{ 'diagrams.department' | translate }}</label>
+          <select id="new-diagram-department" class="form-input" [(ngModel)]="newDiagramDepartment">
+            @for (dept of availableDepartments; track dept) {
+            <option [value]="dept">{{ dept }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bpmn-file-upload" class="form-label">{{ 'diagrams.uploadBpmnFile' | translate }}</label>
+          <input id="bpmn-file-upload" type="file" accept=".bpmn,.xml" class="form-file-input"
+            (change)="onBpmnFileSelected($event)" />
+          @if (uploadedBpmnFileName) {
+          <div class="file-name">{{ uploadedBpmnFileName }}</div>
+          }
+        </div>
+      </div>
+      <div class="modal-actions">
+        <lib-button color="outline" (clicked)="closeUploadDiagramModal()">{{ 'common.cancel' | translate }}</lib-button>
+        <lib-button color="primary" (clicked)="importBpmnDiagram()">{{ 'common.import' | translate }}</lib-button>
+      </div>
+      <button class="modal-close" (click)="closeUploadDiagramModal()">&times;</button>
+    </div>
+  </div>
+  }
+
+  <!-- Export Modal -->
+  @if (showExportModal) {
+  <div class="modal-overlay" (click)="closeExportModal()" (keyup.esc)="closeExportModal()" tabindex="0">
+    <div class="modal-content export-modal" (click)="$event.stopPropagation()" (keyup.enter)="$event.stopPropagation()"
+      tabindex="0">
+      <div class="modal-header">
+        <svg width="56" height="56" viewBox="0 0 48 48" fill="none" style="margin-bottom:8px;">
+          <path d="M24 6v28M24 34l-8-8m8 8l8-8" stroke="#356866" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <rect x="6" y="38" width="36" height="4" rx="2" fill="#356866" fill-opacity=".15" />
+        </svg>
+        <div class="modal-title">{{ 'diagrams.exportAs' | translate }}</div>
+      </div>
+      <div class="export-options">
+        <label class="export-option" [class.selected]="exportOptions.pdf">
+          <input type="checkbox" [(ngModel)]="exportOptions.pdf" />
+          {{ 'diagrams.reportPdf' | translate }}
+        </label>
+        <label class="export-option" [class.selected]="exportOptions.docx">
+          <input type="checkbox" [(ngModel)]="exportOptions.docx" />
+          {{ 'diagrams.microsoftWord' | translate }}
+        </label>
+        <label class="export-option" [class.selected]="exportOptions.png">
+          <input type="checkbox" [(ngModel)]="exportOptions.png" />
+          {{ 'diagrams.diagramPng' | translate }}
+        </label>
+      </div>
+      <div class="modal-actions">
+        <lib-button color="outline" (clicked)="closeExportModal()">{{ 'common.cancel' | translate }}</lib-button>
+        <lib-button color="primary" (clicked)="handleExport()">{{ 'common.export' | translate }}</lib-button>
+      </div>
+      <button class="modal-close" (click)="closeExportModal()">&times;</button>
+    </div>
+  </div>
+  }
+
+  <!-- Status Modal -->
+  @if (showStatusModal) {
+  <div class="modal-overlay" (click)="closeStatusModal()" (keyup.esc)="closeStatusModal()" tabindex="0">
+    <div class="modal-content status-modal" (click)="$event.stopPropagation()" (keyup.enter)="$event.stopPropagation()"
+      tabindex="0">
+      <div class="modal-header">
+        <div class="modal-title">{{ 'diagrams.updateStatus' | translate }}</div>
+        <div class="modal-subtitle">{{ 'diagrams.updateStatusSubtitle' | translate }}</div>
+      </div>
+      <div class="status-options">
+        <button class="status-option" [class.selected]="currentStatus === 'draft'" (click)="updateStatus('draft')">
+          <div class="status-option-content">
+            <div class="status-option-title">{{ 'diagrams.statusDraft' | translate }}</div>
+            <div class="status-option-description">{{ 'diagrams.statusDraftDesc' | translate }}</div>
+          </div>
+          <div class="status-indicator status-draft"></div>
+        </button>
+        <button class="status-option" [class.selected]="currentStatus === 'in review'"
+          (click)="updateStatus('in review')">
+          <div class="status-option-content">
+            <div class="status-option-title">{{ 'diagrams.statusInReview' | translate }}</div>
+            <div class="status-option-description">{{ 'diagrams.statusInReviewDesc' | translate }}</div>
+          </div>
+          <div class="status-indicator status-in-review"></div>
+        </button>
+        <button class="status-option" [class.selected]="currentStatus === 'approved'"
+          (click)="updateStatus('approved')">
+          <div class="status-option-content">
+            <div class="status-option-title">{{ 'diagrams.statusApproved' | translate }}</div>
+            <div class="status-option-description">{{ 'diagrams.statusApprovedDesc' | translate }}</div>
+          </div>
+          <div class="status-indicator status-approved"></div>
+        </button>
+      </div>
+      <div class="modal-actions">
+        <lib-button color="outline" (clicked)="closeStatusModal()">{{ 'common.cancel' | translate }}</lib-button>
+      </div>
+      <button class="modal-close" (click)="closeStatusModal()">&times;</button>
+    </div>
+  </div>
+  }
+</div>
