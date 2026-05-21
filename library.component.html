@@ -1,0 +1,132 @@
+<div class="documents-container">
+  <!-- Header -->
+  <div class="app-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>{{ 'library.title' | translate }}</h1>
+        <p class="header-subtitle">{{ 'library.subtitle' | translate }}</p>
+      </div>
+      <div class="header-actions">
+        <button class="refresh-btn" (click)="refreshDocuments()">
+          <lib-icon name="refresh" [size]="14"></lib-icon>
+          {{ 'library.refresh' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Documents Container -->
+  <div class="documents-main">
+    <!-- Sidebar Navigation -->
+    <div class="documents-sidebar">
+      <!-- Fixed Header -->
+      <div class="sidebar-header-departments">
+        <div class="sidebar-header-icon">
+          <lib-icon name="folder" [size]="20" [strokeWidth]="2"></lib-icon>
+        </div>
+        <div>
+          <h3>{{ 'library.departments' | translate }}</h3>
+          <p>{{ 'library.departmentsSubtitle' | translate }}</p>
+        </div>
+      </div>
+
+      <div class="sidebar-search">
+        <div class="search-container">
+          <lib-icon name="search" [size]="14"></lib-icon>
+          <input type="text" [placeholder]="'Search workflows ...' | translate" (input)="onSearch($event)">
+        </div>
+      </div>
+
+      <!-- Scrollable Content Area -->
+      <div class="sidebar-content">
+        @if (loading) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <span>{{ 'library.loadingDepartments' | translate }}</span>
+        </div>
+        }
+
+        @if (!loading && departments.length === 0) {
+        <div class="empty-state">
+          <p>{{ 'library.noWorkflowsFound' | translate }}</p>
+        </div>
+        }
+
+        @if (!loading && departments.length > 0 && filteredDepartments.length === 0) {
+        <div class="empty-state">
+          <p>{{ 'No Results' | translate }}</p>
+        </div>
+        }
+
+        @if (!loading && filteredDepartments.length > 0) {
+        <div class="departments-list">
+          @for (dept of filteredDepartments; track dept.department) {
+          <div class="department-group">
+            <div class="department-header" (click)="toggleDepartment(dept.department)"
+              (keyup.enter)="toggleDepartment(dept.department)" tabindex="0" role="button">
+              <div class="department-header-left">
+                <lib-icon class="expand-icon" [class.expanded]="isDepartmentExpanded(dept.department)"
+                  [name]="'chevron-right'" [size]="16" [strokeWidth]="2">
+                </lib-icon>
+                <div class="department-icon">
+                  <lib-icon name="folder" [size]="16" [strokeWidth]="2"></lib-icon>
+                </div>
+                <span class="department-name">{{ dept.department || ('library.uncategorized' | translate) }}</span>
+              </div>
+              <span class="department-badge">{{ dept.workflows.length }}</span>
+            </div>
+
+            @if (isDepartmentExpanded(dept.department)) {
+            <div class="workflows-list">
+              @for (workflow of dept.workflows; track workflow.workflowId) {
+              <lib-card [workflow]="getWorkflowCardData(workflow)" [showActions]="true" variant="compact"
+                (diagramClick)="onDiagramClick($event)" (editClick)="onEditClick($event)"
+                (reportClick)="onReportClick($event)" (versionClick)="onVersionClick($event)"
+                (deleteClick)="onDeleteClick($event)">
+              </lib-card>
+              }
+            </div>
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Preview Panel - Matching diagrams interface style -->
+    <div class="preview-panel">
+      @if (!selectedWorkflowId) {
+      <div class="preview-placeholder">
+        <div class="placeholder-icon">
+          <lib-icon name="empty-square" [size]="32" [strokeWidth]="2"></lib-icon>
+        </div>
+        <h3>{{ 'library.selectWorkflow' | translate }}</h3>
+        <p>{{ 'library.selectWorkflowHint' | translate }}</p>
+      </div>
+      }
+      @if (bpmnPreviewLoading) {
+      <div class="preview-loading">
+        <div class="loading-spinner"></div>
+        <p>{{ 'library.loadingDiagram' | translate }}</p>
+      </div>
+      }
+      @if (selectedWorkflowId && !bpmnPreviewLoading && previewXml) {
+      <div class="diagram-preview-wrapper">
+        <lib-diagram-editor #bpmnPreviewCanvas [xml]="previewXml" [loading]="false">
+        </lib-diagram-editor>
+      </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Report Generation Modal -->
+@if (showReportModal) {
+<div class="report-modal-overlay">
+  <div class="report-modal">
+    <div class="report-spinner"></div>
+    <p class="report-progress">{{ reportProgress }}</p>
+  </div>
+</div>
+}
