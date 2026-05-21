@@ -1,0 +1,453 @@
+@use '../../../../../libs/shared/styles/lib/variables' as *;
+@use '../../../../../libs/shared/styles/lib/mixins' as *;
+
+.documents-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - $header-height);
+  width: 100%;
+  background: $bg-secondary;
+  overflow: hidden;
+}
+
+.app-header {
+  background: $white;
+  border-bottom: 1px solid $border-color;
+  padding: 8px 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 0 $spacing-lg;
+}
+
+.header-title {
+  flex-shrink: 0;
+
+  h1 {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.2;
+    color: $text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.header-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  line-height: 1.2;
+  color: $text-secondary;
+}
+
+.header-actions {
+  display: flex;
+  gap: $spacing-md;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.refresh-btn {
+  height: 32px;
+  background: $white;
+  padding: 6px $spacing-sm;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: $font-weight-medium;
+  font-size: 13px;
+  transition: all $transition-base;
+  border: 2px solid $primary-color;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-sm;
+  justify-content: center;
+  color: $primary-color;
+
+  &:hover {
+    background: $bg-secondary;
+    border-color: $primary-color;
+  }
+
+  lib-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.documents-main {
+  flex: 1;
+  display: flex;
+  background: $white;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Sidebar */
+.documents-sidebar {
+  width: 420px;
+  background: linear-gradient(135deg, $bg-secondary 0%, $bg-tertiary 100%);
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header-departments {
+  padding: $spacing-md;
+  /* border-bottom removed to merge with search */
+  flex-shrink: 0;
+  background: $white;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  h3 {
+    margin: 0;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+  }
+
+  p {
+    margin: 2px 0 0;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+  }
+}
+
+.sidebar-search {
+  padding: 0 $spacing-md $spacing-md;
+  border-bottom: 1px solid $border-color;
+  background: $white;
+  flex-shrink: 0;
+
+  .search-container {
+    display: flex;
+    align-items: center;
+    background: $bg-secondary;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-lg;
+    padding: 8px $spacing-sm;
+    transition: all $transition-base;
+    gap: $spacing-sm;
+
+    &:focus-within {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+      background: $white;
+    }
+
+    lib-icon {
+      color: $text-secondary;
+    }
+
+    input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: $font-size-sm;
+      color: $text-primary;
+      width: 100%;
+      padding: 0;
+      line-height: 1.5;
+
+      &::placeholder {
+        color: $text-secondary;
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+.sidebar-header-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-color 100%);
+  border-radius: $border-radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-sm;
+}
+
+.loading-state {
+  padding: $spacing-xl $spacing-md;
+  color: $text-secondary;
+  text-align: center;
+  font-size: $font-size-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $border-color;
+  border-top: 2px solid $primary-color;
+  border-radius: $border-radius-full;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-state {
+  padding: $spacing-xl $spacing-md;
+  text-align: center;
+  color: $text-secondary;
+}
+
+.departments-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.department-group {
+  margin-bottom: $spacing-sm;
+}
+
+.department-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm;
+  background: $white;
+  border-radius: $border-radius-lg;
+  cursor: pointer;
+  transition: all $transition-base;
+  border: 1px solid $border-color;
+  margin-bottom: $spacing-xs;
+
+  &:hover {
+    background: $bg-secondary;
+    border-color: $border-color-hover;
+  }
+}
+
+.department-header-left {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex: 1;
+}
+
+.expand-icon {
+  transition: transform $transition-base;
+  color: $text-secondary;
+
+  &.expanded {
+    transform: rotate(90deg);
+  }
+}
+
+.department-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $primary-color;
+}
+
+.department-name {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+}
+
+.department-badge {
+  background: $primary-color;
+  color: $white;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: $spacing-xs 10px;
+  border-radius: $border-radius-xl;
+  min-width: 24px;
+  text-align: center;
+}
+
+.workflows-list {
+  margin-left: $spacing-sm;
+  padding-left: $spacing-sm;
+  border-left: 2px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+/* Preview Panel - Matching diagrams interface style */
+.preview-panel {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  background: $diagram-bg;
+  position: relative;
+  overflow: visible !important;
+}
+
+.preview-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: $text-secondary;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    margin: 0 0 $spacing-sm;
+    color: $text-primary;
+  }
+
+  p {
+    font-size: $font-size-base;
+    margin: 0;
+    opacity: 0.7;
+  }
+}
+
+.placeholder-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, $primary-color 0%, $primary-color 100%);
+  border-radius: $border-radius-xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto $spacing-md;
+  color: $white;
+}
+
+.preview-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: $text-secondary;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+
+  p {
+    margin: $spacing-md 0 0;
+    font-size: $font-size-sm;
+  }
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid $border-color;
+  border-top-color: $primary-color;
+  border-radius: $border-radius-full;
+  animation: spin 1s linear infinite;
+}
+
+/* Hide BPMN.io watermark */
+::ng-deep .bjs-powered-by {
+  display: none !important;
+}
+
+/* Diagram editor in preview - Matching diagrams interface style */
+.diagram-preview-wrapper {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: $diagram-bg;
+  position: relative;
+  overflow: visible !important;
+
+  /* Hide BPMN palette in preview mode (read-only) */
+  ::ng-deep {
+    .djs-palette {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .djs-palette-entries,
+    .djs-palette-entry,
+    .djs-palette-entry-icon,
+    .djs-palette-entry-text {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+  }
+}
+
+/* Report Generation Modal */
+.report-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.report-modal {
+  background: $white;
+  padding: $spacing-xl $spacing-2xl;
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  min-width: 280px;
+  text-align: center;
+}
+
+.report-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid $border-color;
+  border-top-color: $primary-color;
+  border-radius: $border-radius-full;
+  animation: spin 1s linear infinite;
+}
+
+.report-progress {
+  font-size: $font-size-base;
+  color: $text-secondary;
+  margin: 0;
+  font-weight: $font-weight-medium;
+}

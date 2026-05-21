@@ -1,0 +1,107 @@
+<div class="hub-section">
+  <!-- Header -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bpmn-js@18.6.2/dist/assets/bpmn-js.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bpmn-js@18.6.2/dist/assets/diagram-js.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bpmn-js@18.6.2/dist/assets/bpmn-font/css/bpmn.css">
+
+  <div class="app-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>{{ 'hub.title' | translate }}</h1>
+        <p class="header-subtitle">{{ 'hub.subtitle' | translate }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="hub-container">
+    <!-- Messages Area -->
+    <div #messagesContainer class="hub-messages">
+      @for (msg of messages; track $index; let i = $index) {
+      <div [class]="'message ' + msg.sender">
+        <!-- User messages -->
+        @if (msg.sender === 'user') {
+        <div class="message-user">
+          <div class="message-bubble user-bubble">
+            <div [innerHTML]="msg.content" class="message-content"></div>
+            <div class="message-time">{{ msg.timestamp | date:'shortTime' }}</div>
+          </div>
+        </div>
+        }
+        <!-- Bot messages - check if it's the welcome message (first message) -->
+        @if (msg.sender === 'bot' && i === 0) {
+        <div [innerHTML]="msg.content" class="welcome-message-wrapper"></div>
+        }
+        <!-- Regular bot messages -->
+        @if (msg.sender === 'bot' && i !== 0) {
+        <div class="message-bot">
+          <div class="bot-avatar">
+            <lib-icon name="hub" [size]="20" [color]="'white'" [strokeWidth]="2"></lib-icon>
+          </div>
+          <div class="message-bubble bot-bubble">
+            <div [innerHTML]="msg.content" class="message-content"></div>
+            <div class="message-time">{{ msg.timestamp | date:'shortTime' }}</div>
+          </div>
+        </div>
+        }
+      </div>
+      }
+      <!-- Loading Spinner -->
+      @if (isLoading) {
+      <div class="message-bot">
+        <div class="bot-avatar">
+          <lib-icon name="hub" [size]="20" [color]="'white'" [strokeWidth]="2"></lib-icon>
+        </div>
+        <div class="message-bubble bot-bubble bot-bubble-loading">
+          <lib-spinner size="md"></lib-spinner>
+        </div>
+      </div>
+      }
+    </div>
+
+
+    <!-- Input Area -->
+    <div class="hub-input-container">
+      <div class="input-wrapper">
+        <textarea #chatInput [(ngModel)]="chatInputText" (keydown)="onEnterKey($event)" (input)="onInputResize()"
+          [placeholder]="'hub.inputPlaceholder' | translate" rows="1" class="hub-chat-input"
+          [disabled]="isLoading"></textarea>
+        <button (click)="sendMessage()" class="hub-send-button" type="button" [disabled]="isLoading">
+          ➤
+        </button>
+      </div>
+      <div class="input-hint">{{ 'hub.inputHint' | translate }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- BPMN Diagram Modal -->
+<div id="bpmn-diagram-modal" [style.display]="showBpmnModal ? 'flex' : 'none'" class="bpmn-modal-overlay"
+  (click)="closeBpmnModal()" (keyup.esc)="closeBpmnModal()" tabindex="0">
+  <div class="bpmn-modal-content" (click)="$event.stopPropagation()" (keyup.enter)="$event.stopPropagation()"
+    tabindex="0">
+    <div class="bpmn-modal-header">
+      <div class="bpmn-modal-title-wrapper">
+        <div class="bpmn-modal-title-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <rect x="7" y="7" width="10" height="10" rx="1" />
+          </svg>
+        </div>
+        <h2 id="bpmn-modal-title" class="bpmn-modal-title">{{ bpmnModalTitle }}</h2>
+      </div>
+      <div class="bpmn-modal-controls">
+        <button class="bpmn-modal-close" (click)="closeBpmnModal()" type="button" [title]="'common.close' | translate">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="bpmn-modal-body">
+      <div class="diagram-preview-wrapper">
+        <lib-diagram-editor #bpmnPreviewCanvas [xml]="previewXml" [loading]="false">
+        </lib-diagram-editor>
+      </div>
+    </div>
+  </div>
+</div>

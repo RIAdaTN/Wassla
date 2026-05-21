@@ -1,0 +1,92 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <img src="/assets/avatar.png" alt="Process Advisor Logo" class="login-logo">
+      <h2>{{ isLoginMode() ? ('login.welcomeTitle' | translate) : ('login.registerTitle' | translate) }}</h2>
+      <p>{{ isLoginMode() ? ('login.welcomeSubtitle' | translate) : ('login.registerSubtitle' | translate) }}</p>
+    </div>
+
+    @if (error()) {
+    <div class="error-message">
+      {{ error() }}
+    </div>
+    }
+
+    @if (isLoginMode()) {
+    <!-- Login Form -->
+    <form (ngSubmit)="onLogin()" class="login-form">
+      <div class="form-group">
+        <label for="identifier">{{ 'login.usernameOrEmail' | translate }}</label>
+        <input type="text" id="identifier" [value]="loginIdentifier()"
+          (input)="loginIdentifier.set($any($event.target).value)"
+          [placeholder]="'login.enterUsernameOrEmail' | translate" required [disabled]="isLoading()"
+          class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">{{ 'login.password' | translate }}</label>
+        <input type="password" id="loginPassword" [value]="loginPassword()"
+          (input)="loginPassword.set($any($event.target).value)" [placeholder]="'login.enterPassword' | translate"
+          required [disabled]="isLoading()" class="form-input" />
+      </div>
+
+      <button type="submit" [disabled]="isLoading() || !loginIdentifier().trim() || !loginPassword().trim()"
+        class="submit-button">
+        @if (isLoading()) {
+        <span>{{ 'login.loggingIn' | translate }}</span>
+        } @else {
+        <span>{{ 'login.loginButton' | translate }}</span>
+        }
+      </button>
+    </form>
+    } @else {
+    <!-- Register Form -->
+    <form (ngSubmit)="onRegister()" class="login-form">
+      <div class="form-group">
+        <label for="username">{{ 'login.username' | translate }}</label>
+        <input type="text" id="username" [value]="registerUsername()"
+          (input)="registerUsername.set($any($event.target).value)" [placeholder]="'login.chooseUsername' | translate"
+          required [disabled]="isLoading()" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">{{ 'login.email' | translate }}</label>
+        <input type="email" id="email" [value]="registerEmail()" (input)="registerEmail.set($any($event.target).value)"
+          [placeholder]="'login.enterEmail' | translate" required [disabled]="isLoading()" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="registerPassword">{{ 'login.password' | translate }}</label>
+        <input type="password" id="registerPassword" [value]="registerPassword()"
+          (input)="registerPassword.set($any($event.target).value)" [placeholder]="'login.choosePassword' | translate"
+          required minlength="6" [disabled]="isLoading()" class="form-input" />
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">{{ 'login.confirmPassword' | translate }}</label>
+        <input type="password" id="confirmPassword" [value]="registerConfirmPassword()"
+          (input)="registerConfirmPassword.set($any($event.target).value)"
+          [placeholder]="'login.confirmYourPassword' | translate" required [disabled]="isLoading()"
+          class="form-input" />
+      </div>
+
+      <button type="submit"
+        [disabled]="isLoading() || !registerUsername().trim() || !registerEmail().trim() || !registerPassword().trim() || !registerConfirmPassword().trim()"
+        class="submit-button">
+        @if (isLoading()) {
+        <span>{{ 'login.registering' | translate }}</span>
+        } @else {
+        <span>{{ 'login.registerButton' | translate }}</span>
+        }
+      </button>
+    </form>
+    }
+
+    <div class="toggle-mode">
+      <span>{{ isLoginMode() ? ('login.noAccount' | translate) : ('login.haveAccount' | translate) }}</span>
+      <button type="button" (click)="toggleMode()" class="toggle-button">
+        {{ isLoginMode() ? ('login.registerButton' | translate) : ('login.loginButton' | translate) }}
+      </button>
+    </div>
+  </div>
+</div>
