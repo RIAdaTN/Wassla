@@ -1,13 +1,5 @@
 import { Client } from '@elastic/elasticsearch';
 
-const esClient = new Client({
-    node: 'http://localhost:9200',
-    auth: {
-        username: 'elastic',
-        password: 'changeme'
-    }
-  
-});
 export const WORKFLOWS_INDEX = 'bpmn_workflows';
 const EMBEDDING_DIMENSION = 1536; // OpenAI text-embedding-3-small dimension
 
